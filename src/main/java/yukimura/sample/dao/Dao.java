@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -20,38 +19,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import yukimura.sample.dao.entity.SQLHistoryEntity;
-import yukimura.sample.dao.entity.SQLNameEntity;
 
 @Repository
 @ToString
 public class Dao implements AutoCloseable {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
     @Autowired
     private DataSource dataSource;
-
-    /**
-     * sql_nameテーブルからsql_idとsql_nameの情報を全て抽出する。
-     * @return
-     * @throws SQLException
-     */
-    public List<SQLNameEntity> selectSqlIds() throws SQLException {
-        final String sqlSelectSqlIds = "SELECT sql_id,sql_name FROM sql_name";
-        List<SQLNameEntity> sqlIdsList = new ArrayList<>();
-        try( 
-          Statement stmt = dataSource.getConnection().createStatement();
-          ResultSet rs = stmt.executeQuery(sqlSelectSqlIds)
-        ) {
-            while( rs.next() ) {
-                Integer sqlId = rs.getInt("sql_id");
-                String  sqlName = rs.getString("sql_name");
-                sqlIdsList.add( new SQLNameEntity(sqlId, sqlName) );
-            }
-            
-        }
-        return sqlIdsList;
-    }
 
     /**
      * 対象となるsql_idに紐づく、sqlの登録履歴を取得する。
@@ -76,7 +52,7 @@ public class Dao implements AutoCloseable {
             }
 
         }
-    
+
         return sqlHistryList;
 
     }
@@ -88,9 +64,11 @@ public class Dao implements AutoCloseable {
      * @throws SQLException
      */
     public Integer insertSQLName(final String sqlName) throws SQLException {
-        final String insertSQLName = "INSERT INTO sql_name value(?,?)";
+        final String insertSQLName  = "INSERT INTO sql_name value(?,?)";
+        final String selectMaxSqlId = "SELECT max(sql_id) AS max_sql_id FROM sql_name";
         try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(insertSQLName)){
-            Integer nextSqlId = this.selectMaxSqlId()+1;
+            Integer maxSqlId = (Integer)jdbcTemplate.queryForList(selectMaxSqlId).get(0).get("max_sql_id");
+            Integer nextSqlId = maxSqlId+1;
             pstmt.setInt(1, nextSqlId);
             pstmt.setString(2, sqlName);
             pstmt.execute();
@@ -117,22 +95,6 @@ public class Dao implements AutoCloseable {
         }
     }
 
-    /**
-     * 
-     * @return
-     * @throws SQLException
-     */
-    private Integer selectMaxSqlId() throws SQLException {
-        final String selectMaxSqlId = "SELECT max(sql_id) AS max_sql_id FROM sql_name";
-        try( 
-          Statement stmt = dataSource.getConnection().createStatement();
-          ResultSet rs = stmt.executeQuery(selectMaxSqlId)
-        ) {
-            rs.next();
-            return rs.getInt("max_sql_id");
-        }
-    }
-    
     private Integer selectMaxSeq(final Integer targetSqlId) throws SQLException {
         final String sqlSelectMaxSeq = "SELECT max(seq) max_seq FROM sql_history where sql_id = ?";
         try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(sqlSelectMaxSeq)) {
@@ -143,9 +105,9 @@ public class Dao implements AutoCloseable {
                     
             }
         }
-        
+
     }
-    
+
     /**
      * 特定テーブルから、第一引数で指定したカラムを取得する。
      * （queryForListのSampleその１）
@@ -169,7 +131,7 @@ public class Dao implements AutoCloseable {
             System.err.println("close failed.");
             sqle.printStackTrace();
         }
-        
+
     }
-    
+
 }
