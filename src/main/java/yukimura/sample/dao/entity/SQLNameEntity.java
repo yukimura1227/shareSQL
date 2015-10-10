@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SQLNameEntity {
-	private Integer sqlId;
-	private String  sqlName;
+    private Integer sqlId;
+    private String  sqlName;
 
 }

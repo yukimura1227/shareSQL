@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SQLHistoryEntity {
-	private Integer sqlId;
-	private Integer seq;
-	private String  sqlSentence;
-	private String  comment;
+    private Integer sqlId;
+    private Integer seq;
+    private String  sqlSentence;
+    private String  comment;
 
 }
