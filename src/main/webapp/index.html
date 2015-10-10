@@ -24,7 +24,7 @@
   <!-- BootStrap -->
   <script type="text/javascript" src="assets/vendor/bootstrap/js/bootstrap.js"></script>
   <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.css" />
-  
+
   <script type="text/javascript">
     var sqlHistory;
     var targetSqlInfo;
@@ -138,8 +138,9 @@
       $('#sqlIdSelectBox').change( function() {
         console.log("sqlIdSelectBox is change");
         $("#sqlSeqSelectBox").children().remove();
-        var selectedValue = $('#sqlIdSelectBox').val();
-        var targetUrl     = "rest/sample/getSqlHistoryKeys/" + selectedValue;
+        var selectedValue       = $('#sqlIdSelectBox').val();
+        var targetUrl           = "rest/sample/getSqlHistoryKeys/" + selectedValue;
+        var selectedDisplayName = $('#sqlIdSelectBox option:selected').text();
         $.ajax( {
           type : "GET",
           url  : targetUrl,
@@ -154,6 +155,7 @@
                   .text(val.seq)
               );
             });
+            $('#sqlName').val(selectedDisplayName);
             // fire the change event
             $("#sqlSeqSelectBox").change();
           }
