@@ -11,12 +11,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import yukimura.sample.dao.entity.SQLHistoryEntity;
-
 
 @Path("/sample")
 public interface ShareSQLService {    
-	// Ex) http://localhost:8080/shareSQL/rest/sample/getSqlIds
+    // Ex) http://localhost:8080/shareSQL/rest/sample/getSqlIds
     @GET
     @Path("/getSqlIds")
     @Produces("application/json")
@@ -26,7 +24,7 @@ public interface ShareSQLService {
     @GET
     @Path("/getSqlHistoryKeys/{sqlId}")
     @Produces("application/json")
-    public List<SQLHistoryEntity> getSqlHistoryKeys(@PathParam("sqlId") Integer targetSqlId) throws SQLException;
+    public List<Map<String, Object>> getSqlHistoryKeys(@PathParam("sqlId") Integer targetSqlId) throws SQLException;
 
     @POST
     @Path("/createSQL")

@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -28,34 +27,6 @@ public class Dao implements AutoCloseable {
 
     @Autowired
     private DataSource dataSource;
-
-    /**
-     * 対象となるsql_idに紐づく、sqlの登録履歴を取得する。
-     * @param targetSqlId
-     * @return
-     * @throws SQLException
-     */
-    public List<SQLHistoryEntity> selectSqlHistoryInfos(Integer targetSqlId) throws SQLException {
-        final String sqlSelectSqlHistoryKeys = "SELECT sql_id,seq,sql_sentence,comment FROM sql_history where sql_id = ? order by seq desc";
-        List<SQLHistoryEntity> sqlHistryList = new ArrayList<>();
-        try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(sqlSelectSqlHistoryKeys)) {
-            pstmt.setInt(1, targetSqlId);
-            try(ResultSet rs = pstmt.executeQuery()){
-                while( rs.next() ) {
-                    Integer sqlId       = rs.getInt("sql_id");
-                    Integer seq         = rs.getInt("seq");
-                    String  sqlSentence = rs.getString("sql_sentence");
-                    String  comment     = rs.getString("comment");
-                    sqlHistryList.add( new SQLHistoryEntity(sqlId, seq, sqlSentence, comment) );
-                    }
-
-            }
-
-        }
-
-        return sqlHistryList;
-
-    }
 
     /**
      * sql_nameテーブルへの登録を行う。

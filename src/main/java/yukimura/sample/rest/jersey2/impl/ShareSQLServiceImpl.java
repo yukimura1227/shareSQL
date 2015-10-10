@@ -16,17 +16,25 @@ public class ShareSQLServiceImpl implements ShareSQLService {
     @Override
     public List<Map<String, Object>> getSqlIds() throws SQLException {
         //  sql_nameテーブルからsql_idとsql_nameの情報を全て抽出する。
-        final String sqlSelectSqlIds = "SELECT sql_id as sqlId ,sql_name as sqlName FROM sql_name";
+        final String sqlSelectSqlIds 
+          = "SELECT sql_id as sqlId ,sql_name as sqlName FROM sql_name";
         List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList(sqlSelectSqlIds);
         return select2MapList;
 
     }
 
     @Override
-    public List<SQLHistoryEntity> getSqlHistoryKeys(Integer targetSqlId) throws SQLException {
+    public List<Map<String, Object>> getSqlHistoryKeys(Integer targetSqlId) throws SQLException {
         if( targetSqlId == null ) return null;
+        // 対象のsql_idに紐づく情報をsql_historyとsql_nameテーブルから、取得する
+        final String sqlSelectSqlHistoryKeys 
+          = "SELECT sql_id as sqlId, seq, sql_sentence as sqlSentence,comment FROM sql_history "
+          + "WHERE sql_id = %d "
+          + "order by seq desc";
+        List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList( String.format(sqlSelectSqlHistoryKeys,targetSqlId) );
 
-        return sqlHistoryDao.selectSqlHistoryInfos(targetSqlId);
+        return select2MapList;
+//        return sqlHistoryDao.selectSqlHistoryInfos(targetSqlId);
 
     }
 
