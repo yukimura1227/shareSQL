@@ -90,7 +90,7 @@ public class Dao {
      * @param sqlParamMap
      * @return
      */
-    public List<Map<String, Object>>select2MapList(final String sql, final Map<String, Object> sqlParamMap) {
+    public List<Map<String, Object>> select2MapList(final String sql, final Map<String, Object> sqlParamMap) {
         System.out.println("called select2MapList :" + sql + ":" + sqlParamMap);
         return namedParameterJdbcTemplate.queryForList(sql, sqlParamMap);
     }
