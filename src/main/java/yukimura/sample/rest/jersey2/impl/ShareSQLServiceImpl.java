@@ -1,6 +1,7 @@
 package yukimura.sample.rest.jersey2.impl;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +30,11 @@ public class ShareSQLServiceImpl implements ShareSQLService {
         // 対象のsql_idに紐づく情報をsql_historyとsql_nameテーブルから、取得する
         final String sqlSelectSqlHistoryKeys 
           = "SELECT sql_id as sqlId, seq, sql_sentence as sqlSentence,comment FROM sql_history "
-          + "WHERE sql_id = %d "
+          + "WHERE sql_id = :targetSqlId "
           + "order by seq desc";
-        List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList( String.format(sqlSelectSqlHistoryKeys,targetSqlId) );
+        Map<String, Object> sqlParamMap = new HashMap<>();
+        sqlParamMap.put("targetSqlId", targetSqlId);
+        List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList( sqlSelectSqlHistoryKeys, sqlParamMap);
 
         return select2MapList;
 //        return sqlHistoryDao.selectSqlHistoryInfos(targetSqlId);
