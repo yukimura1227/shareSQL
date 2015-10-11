@@ -45,9 +45,9 @@ public class ShareSQLServiceImpl implements ShareSQLService {
     public boolean createSQL(String sqlName, String sqlSentence, String sqlComment) throws SQLException {
         Integer sqlId = sqlHistoryDao.insertSQLName(sqlName);
         SQLHistoryEntity sqlHistoryEntity = new SQLHistoryEntity(sqlId, null, sqlSentence, sqlComment);
-        boolean result = sqlHistoryDao.insertSQLHistory(sqlHistoryEntity);
+        int result = sqlHistoryDao.insertSQLHistory(sqlHistoryEntity);
 
-        return result;
+        return result == 1 ? true : false;
 
     }
 

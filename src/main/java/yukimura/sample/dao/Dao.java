@@ -2,7 +2,6 @@ package yukimura.sample.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -57,16 +56,15 @@ public class Dao implements AutoCloseable {
      * @return
      * @throws SQLException
      */
-    public boolean insertSQLHistory(final SQLHistoryEntity insertData) throws SQLException {
-        final String insertSQLName = "INSERT INTO sql_history value(?,?,?,?,?)";
-        try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(insertSQLName)){
-            pstmt.setInt(1, insertData.getSqlId());
-            pstmt.setInt(2, this.selectMaxSeq(insertData.getSqlId())+1);
-            pstmt.setString(3, insertData.getSqlSentence());
-            pstmt.setString(4, insertData.getComment());
-            pstmt.setDate(5, new Date(Calendar.getInstance().getTimeInMillis()));
-            return pstmt.execute();
-        }
+    public int insertSQLHistory(final SQLHistoryEntity insertData) throws SQLException {
+        final String insertSQLName = "INSERT INTO sql_history value(:sqlId,:seq,:sqlSentence,:sqlComment,:registDate)";
+        Map<String, Object> sqlParamMap = new HashMap<>();
+        sqlParamMap.put("sqlId"      , insertData.getSqlId());
+        sqlParamMap.put("seq"        , this.selectMaxSeq(insertData.getSqlId())+1);
+        sqlParamMap.put("sqlSentence", insertData.getSqlSentence());
+        sqlParamMap.put("sqlComment" , insertData.getComment());
+        sqlParamMap.put("registDate" , new Date(Calendar.getInstance().getTimeInMillis()));
+        return namedParameterJdbcTemplate.update(insertSQLName, sqlParamMap);
     }
 
     private Integer selectMaxSeq(final Integer targetSqlId) throws SQLException {
