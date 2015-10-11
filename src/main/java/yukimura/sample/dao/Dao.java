@@ -1,6 +1,5 @@
 package yukimura.sample.dao;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -21,7 +20,7 @@ import yukimura.sample.dao.entity.SQLHistoryEntity;
 
 @Repository
 @ToString
-public class Dao implements AutoCloseable {
+public class Dao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -94,21 +93,6 @@ public class Dao implements AutoCloseable {
     public List<Map<String, Object>>select2MapList(final String sql, final Map<String, Object> sqlParamMap) {
         System.out.println("called select2MapList :" + sql + ":" + sqlParamMap);
         return namedParameterJdbcTemplate.queryForList(sql, sqlParamMap);
-    }
-
-    @Override
-    public void close() throws Exception {
-        System.out.println("SQLHIstory Datasource close()");
-        try {
-            Connection conn = dataSource.getConnection();
-            if( conn != null && !conn.isClosed() ) {
-                conn.close();
-            }
-        } catch (SQLException sqle) {
-            System.err.println("close failed.");
-            sqle.printStackTrace();
-        }
-
     }
 
 }
