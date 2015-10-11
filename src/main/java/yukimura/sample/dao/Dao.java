@@ -28,7 +28,7 @@ public class Dao implements AutoCloseable {
 
     @Autowired
     private DataSource dataSource;
-    
+
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -39,16 +39,15 @@ public class Dao implements AutoCloseable {
      * @throws SQLException
      */
     public Integer insertSQLName(final String sqlName) throws SQLException {
-        final String insertSQLName  = "INSERT INTO sql_name value(?,?)";
+        final String insertSQLName  = "INSERT INTO sql_name value(:sqlId,:sqlName)";
         final String selectMaxSqlId = "SELECT max(sql_id) AS max_sql_id FROM sql_name";
-        try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(insertSQLName)){
-            Integer maxSqlId = (Integer)jdbcTemplate.queryForList(selectMaxSqlId).get(0).get("max_sql_id");
-            Integer nextSqlId = maxSqlId+1;
-            pstmt.setInt(1, nextSqlId);
-            pstmt.setString(2, sqlName);
-            pstmt.execute();
-            return nextSqlId;
-        }
+        Integer maxSqlId = namedParameterJdbcTemplate.queryForObject(selectMaxSqlId, new HashMap<String, Object>(), Integer.class);
+        Integer nextSqlId = maxSqlId+1;
+        Map<String, Object> sqlParamMap = new HashMap<>();
+        sqlParamMap.put("sqlId", nextSqlId);
+        sqlParamMap.put("sqlName", sqlName);
+        namedParameterJdbcTemplate.update(insertSQLName, sqlParamMap);
+        return nextSqlId;
 
     }
 
@@ -75,7 +74,6 @@ public class Dao implements AutoCloseable {
         final String sqlSelectMaxSeq = "SELECT max(seq) max_seq FROM sql_history where sql_id = :targetSqlId";
         Map<String, Object> sqlParamMap = new HashMap<>();
         sqlParamMap.put("targetSqlId", targetSqlId);
-        select2MapList(sqlSelectMaxSeq, sqlParamMap);
         Integer maxSeq =  namedParameterJdbcTemplate.queryForObject(sqlSelectMaxSeq, sqlParamMap, Integer.class);
         return maxSeq == null ? 0 : maxSeq;
     }
