@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,15 +72,13 @@ public class Dao implements AutoCloseable {
     }
 
     private Integer selectMaxSeq(final Integer targetSqlId) throws SQLException {
-        final String sqlSelectMaxSeq = "SELECT max(seq) max_seq FROM sql_history where sql_id = ?";
-        try(PreparedStatement pstmt = dataSource.getConnection().prepareStatement(sqlSelectMaxSeq)) {
-            pstmt.setInt(1, targetSqlId);
-            try(ResultSet rs = pstmt.executeQuery()){
-                rs.next();
-                return rs.getInt("max_seq");
-            }
-        }
-
+        System.out.println("called selectMaxSeq " + targetSqlId);
+        final String sqlSelectMaxSeq = "SELECT max(seq) max_seq FROM sql_history where sql_id = :targetSqlId";
+        Map<String, Object> sqlParamMap = new HashMap<>();
+        sqlParamMap.put("targetSqlId", targetSqlId);
+        select2MapList(sqlSelectMaxSeq, sqlParamMap);
+        Integer maxSeq =  namedParameterJdbcTemplate.queryForObject(sqlSelectMaxSeq, sqlParamMap, Integer.class);
+        return maxSeq == null ? 0 : maxSeq;
     }
 
     /**
@@ -98,6 +97,7 @@ public class Dao implements AutoCloseable {
      * @return
      */
     public List<Map<String, Object>>select2MapList(final String sql, final Map<String, Object> sqlParamMap) {
+        System.out.println("called select2MapList :" + sql + ":" + sqlParamMap);
         return namedParameterJdbcTemplate.queryForList(sql, sqlParamMap);
     }
 
