@@ -15,6 +15,7 @@ import lombok.ToString;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import yukimura.sample.dao.entity.SQLHistoryEntity;
@@ -27,6 +28,9 @@ public class Dao implements AutoCloseable {
 
     @Autowired
     private DataSource dataSource;
+    
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     /**
      * sql_nameテーブルへの登録を行う。
@@ -73,21 +77,28 @@ public class Dao implements AutoCloseable {
             try(ResultSet rs = pstmt.executeQuery()){
                 rs.next();
                 return rs.getInt("max_seq");
-                    
             }
         }
 
     }
 
     /**
-     * 特定テーブルから、第一引数で指定したカラムを取得する。
-     * （queryForListのSampleその１）
-     * @param targetColumnArray
-     * @param tableName
+     * 渡されたsqlを実行する。
+     * @param sql
      * @return
      */
     public List<Map<String, Object>> select2MapList(final String sql) {
-        return jdbcTemplate.queryForList(sql);
+        return this.select2MapList(sql,null);
+    }
+
+    /**
+     * 渡されたsqlを実行する。
+     * @param sql
+     * @param sqlParamMap
+     * @return
+     */
+    public List<Map<String, Object>>select2MapList(final String sql, final Map<String, Object> sqlParamMap) {
+        return namedParameterJdbcTemplate.queryForList(sql, sqlParamMap);
     }
 
     @Override
