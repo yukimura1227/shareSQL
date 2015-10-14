@@ -61,6 +61,9 @@ public class ShareSQLServiceImpl implements ShareSQLService {
         return result == 1 ? true : false;
 
     }
+    /**
+     * 引数で渡されたSQLを実行する
+     */
     @Override
     public List<Map<String, Object>> executeQuery(String sql) {
         List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList(sql);
