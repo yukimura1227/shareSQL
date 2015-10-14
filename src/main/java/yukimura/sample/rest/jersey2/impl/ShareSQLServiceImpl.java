@@ -52,6 +52,16 @@ public class ShareSQLServiceImpl implements ShareSQLService {
     }
 
     @Override
+    public boolean updateSQL(Integer sqlId, String sqlName, String sqlSentence, String sqlComment) throws SQLException {
+        System.out.println("called updateSQL sqlId:" + sqlId);
+        sqlHistoryDao.updateSQLName(sqlId, sqlName);
+        SQLHistoryEntity sqlHistoryEntity = new SQLHistoryEntity(sqlId, null, sqlSentence, sqlComment);
+        int result = sqlHistoryDao.insertSQLHistory(sqlHistoryEntity);
+
+        return result == 1 ? true : false;
+
+    }
+    @Override
     public List<Map<String, Object>> executeQuery(String sql) {
         List<Map<String, Object>> select2MapList = sqlHistoryDao.select2MapList(sql);
         System.out.println(sql);

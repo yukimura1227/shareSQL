@@ -45,6 +45,14 @@ public class Dao {
         return nextSqlId;
 
     }
+    
+    public Integer updateSQLName(final Integer sqlId, final String sqlName) {
+        final String updateSQLName = "update sql_name set sql_name = :sqlName where sql_id = :sqlId";
+        Map<String, Object> sqlParamMap = new HashMap<>();
+        sqlParamMap.put("sqlId", sqlId);
+        sqlParamMap.put("sqlName", sqlName);
+        return namedParameterJdbcTemplate.update(updateSQLName, sqlParamMap);
+    }
 
     /**
      * sql_historyにデータを登録する。

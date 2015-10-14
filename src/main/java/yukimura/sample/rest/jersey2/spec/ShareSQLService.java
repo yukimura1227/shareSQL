@@ -34,7 +34,16 @@ public interface ShareSQLService {
       @FormParam("sqlSentence")String sqlSentence,
       @FormParam("sqlComment") String sqlComment
     ) throws SQLException;
-    
+
+    @POST
+    @Path("/updateSQL")
+    @Produces("application/json")
+    public boolean updateSQL(
+      @FormParam("sqlId")      Integer sqlId,
+      @FormParam("sqlName")    String  sqlName,
+      @FormParam("sqlSentence")String  sqlSentence,
+      @FormParam("sqlComment") String  sqlComment
+    ) throws SQLException;
     @POST
     @Path("/execQuery")
     @Produces("application/json")

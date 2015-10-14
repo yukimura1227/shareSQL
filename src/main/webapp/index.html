@@ -34,13 +34,14 @@
       setupMergely();
 
       handleRegistSqlBtnClick();
+      handleUpdateSqlBtnClick();
       handleExecuteSqlBtnClick();
 
       refreshSqlIdSelectBox();
 
       handleSqlIdSelectBoxChange();
       handleSqlSeqSelectBoxChange();
-      
+
       sqlSentenceTextAreaToSqlMode();
     });
     function sqlSentenceTextAreaToSqlMode() {
@@ -111,6 +112,25 @@
       });
       $("#sqlSeqSelectBox").change();
     }
+    function handleUpdateSqlBtnClick() {
+      $('#updateSqlBtn').click( function() {
+        var sqlId       = $('#sqlIdSelectBox').val();
+        var sqlName     = $("#sqlName").val();
+        var sqlSentence = sqlEditor.getValue();
+        var sqlComment  = $("#sqlComment").val();
+        var postData = "sqlId=" + sqlId + "&sqlName="+ sqlName + "&sqlSentence=" + sqlSentence + "&sqlComment=" + sqlComment;
+        console.log(postData);
+        $.ajax( {
+          type : "POST",
+          url  : "rest/sample/updateSQL",
+          data : postData,
+          success : function(msg) {
+            console.log(msg);
+            refreshSqlIdSelectBox();
+          }
+        });
+      });
+    }
     function handleExecuteSqlBtnClick() {
       $('#executeSqlBtn').click( function() {
         //var sql = $("#sqlSentence").val();
@@ -132,7 +152,7 @@
             });
           }
         });
-      });        
+      });
     }
     function handleSqlIdSelectBoxChange() {
       $('#sqlIdSelectBox').change( function() {
@@ -223,6 +243,13 @@
         </div>
         <div class="col-sm-6">
           <button type="button" id="registSqlBtn" value="post"  class="btn btn-primary form-control">saveSQL</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+        </div>
+        <div class="col-sm-6">
+          <button type="button" id="updateSqlBtn" value="post"  class="btn btn-primary form-control">updateSQL</button>
         </div>
       </div>
     </div>
