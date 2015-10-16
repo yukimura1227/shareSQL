@@ -24,7 +24,7 @@ public interface ShareSQLService {
     @GET
     @Path("/getSqlHistoryKeys/{sqlId}")
     @Produces("application/json")
-    public List<Map<String, Object>> getSqlHistoryKeys(@PathParam("sqlId") Integer targetSqlId) throws SQLException;
+    public List<Map<String, Object>> getSqlHistoryInfo(@PathParam("sqlId") Integer targetSqlId) throws SQLException;
 
     @POST
     @Path("/createSQL")

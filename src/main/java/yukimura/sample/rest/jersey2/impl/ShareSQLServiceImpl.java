@@ -14,6 +14,9 @@ import yukimura.sample.rest.jersey2.spec.ShareSQLService;
 public class ShareSQLServiceImpl implements ShareSQLService {
     @Autowired
     private Dao sqlHistoryDao;
+    /**
+     * sql_nameテーブルからsql_idとsql_nameの情報を全て抽出する。
+     */
     @Override
     public List<Map<String, Object>> getSqlIds() throws SQLException {
         //  sql_nameテーブルからsql_idとsql_nameの情報を全て抽出する。
@@ -24,8 +27,11 @@ public class ShareSQLServiceImpl implements ShareSQLService {
 
     }
 
+    /**
+     * 対象のsql_idに対して、sql_historyの情報を取得する。
+     */
     @Override
-    public List<Map<String, Object>> getSqlHistoryKeys(Integer targetSqlId) throws SQLException {
+    public List<Map<String, Object>> getSqlHistoryInfo(Integer targetSqlId) throws SQLException {
         if( targetSqlId == null ) return null;
         // 対象のsql_idに紐づく情報をsql_historyとsql_nameテーブルから、取得する
         final String sqlSelectSqlHistoryKeys 
@@ -41,6 +47,9 @@ public class ShareSQLServiceImpl implements ShareSQLService {
 
     }
 
+    /**
+     * SQLの情報をsql_historyテーブルに登録する。
+     */
     @Override
     public boolean createSQL(String sqlName, String sqlSentence, String sqlComment) throws SQLException {
         Integer sqlId = sqlHistoryDao.insertSQLName(sqlName);
@@ -51,6 +60,9 @@ public class ShareSQLServiceImpl implements ShareSQLService {
 
     }
 
+    /**
+     * SQLの情報を更新する(連番を新規で採番して追加登録)
+     */
     @Override
     public boolean updateSQL(Integer sqlId, String sqlName, String sqlSentence, String sqlComment) throws SQLException {
         System.out.println("called updateSQL sqlId:" + sqlId);
@@ -61,6 +73,7 @@ public class ShareSQLServiceImpl implements ShareSQLService {
         return result == 1 ? true : false;
 
     }
+
     /**
      * 引数で渡されたSQLを実行する
      */

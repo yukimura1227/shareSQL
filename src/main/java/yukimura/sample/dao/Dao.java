@@ -45,7 +45,7 @@ public class Dao {
         return nextSqlId;
 
     }
-    
+
     public Integer updateSQLName(final Integer sqlId, final String sqlName) {
         final String updateSQLName = "update sql_name set sql_name = :sqlName where sql_id = :sqlId";
         Map<String, Object> sqlParamMap = new HashMap<>();
